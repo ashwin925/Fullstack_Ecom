@@ -4,7 +4,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./frontend/index";
 import Dashboard from "./frontend/dashboard";
-import Register from "./components/Register";
+import Register from "./frontend/register";
 
 function App() {
     const [user, setUser] = useState(null);
