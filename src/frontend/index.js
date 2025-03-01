@@ -1,4 +1,4 @@
-export function Home() {
+export default function Home() {
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
