@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Home from "./components/Home";
+import Dashboard from "./components/Dashboard";
+import Register from "./components/Register";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -26,23 +31,19 @@ function App() {
     };
 
     return (
-        <div className="container text-center mt-5">
-            <h1 className="mb-4">OAuth Google Authentication</h1>
-
-            {loading ? (
-                <h3>Loading...</h3>
-            ) : user ? (
-                <>
-                    <h2>Welcome, {user.name}!</h2>
-                    <p>Email: {user.email}</p>
-                    <button className="btn btn-danger mt-3" onClick={handleLogout}>Logout</button>
-                </>
-            ) : (
-                <button className="btn btn-primary mt-3" onClick={handleGoogleLogin}>
-                    Login with Google
-                </button>
-            )}
-        </div>
+        <Router>
+            <div className="container mt-5 text-center">
+                {loading ? (
+                    <h3>Loading...</h3>
+                ) : (
+                    <Routes>
+                        <Route path="/" element={<Home onLogin={handleGoogleLogin} />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/dashboard" element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                    </Routes>
+                )}
+            </div>
+        </Router>
     );
 }
 
