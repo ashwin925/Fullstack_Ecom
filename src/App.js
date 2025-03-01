@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./frontend/index";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./frontend/dashboard";
 import Register from "./components/Register";
 
 function App() {
