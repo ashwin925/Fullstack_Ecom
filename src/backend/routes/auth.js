@@ -6,13 +6,15 @@ const router = express.Router();
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Google Callback Route
-router.get('/google/callback',
+router.get(
+    '/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        res.redirect(`${process.env.CLIENT_URL}/dashboard`);  // Redirect to React frontend
+        res.redirect(`${process.env.CLIENT_URL}/dashboard`);
     }
 );
 
+// Check Authentication Status
 router.get('/me', (req, res) => {
     if (req.isAuthenticated()) {
         res.json(req.user);
@@ -21,10 +23,10 @@ router.get('/me', (req, res) => {
     }
 });
 
-
 // Logout Route
 router.get('/logout', (req, res) => {
-    req.logout(() => {
+    req.logout();
+    req.session.destroy(() => {
         res.redirect('/');
     });
 });
