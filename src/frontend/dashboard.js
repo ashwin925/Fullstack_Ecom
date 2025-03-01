@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export function Dashboard() {
+export default function Dashboard() {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
