@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles.css"; // Add this for custom styles
+import "./index.css"; // Add this for custom styles
 
 export default function Home() {
     const navigate = useNavigate();
