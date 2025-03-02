@@ -8,10 +8,13 @@ export default function Dashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/auth/me", { withCredentials: true })
-            .then(response => setUser(response.data))
-            .catch(() => navigate("/"));
+        axios.get("http://localhost:5000/api/auth/me", {
+            withCredentials: true  // ✅ Ensures cookies (JWT) are sent
+        })
+        .then(response => setUser(response.data))
+        .catch(() => navigate("/")); 
     }, [navigate]);
+    
 
     const handleLogout = () => {
         axios.get("http://localhost:5000/api/auth/logout", { withCredentials: true })
