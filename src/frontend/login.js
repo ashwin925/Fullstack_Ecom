@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./styles.css"; // Custom styling
+import "./login.css"; // Custom styling
 
 export default function Login() {
     const navigate = useNavigate();
