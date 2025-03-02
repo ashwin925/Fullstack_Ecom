@@ -4,11 +4,11 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
 router.get('/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
+    passport.authenticate('google', { scope: ['profile', 'email'], session: false })  // ✅ Disable sessions
 );
 
 router.get('/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
+    passport.authenticate('google', { failureRedirect: '/', session: false }),  // ✅ Disable sessions
     (req, res) => {
         const token = jwt.sign(
             { id: req.user._id, email: req.user.email },
