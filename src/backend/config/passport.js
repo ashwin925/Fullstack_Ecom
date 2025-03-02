@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -19,23 +20,17 @@ passport.use(new GoogleStrategy({
             await user.save();
         }
 
+        // ✅ Generate JWT Token
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        user.token = token; // Store the token
+
         return done(null, user);
     } catch (err) {
         return done(err, null);
     }
 }));
-
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await User.findById(id);
-        done(null, user);
-    } catch (err) {
-        done(err, null);
-    }
-});
-
-module.exports = passport;
