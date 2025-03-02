@@ -1,0 +1,46 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to right, #141E30, #243B55);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.login-card {
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.login-card:hover {
+  transform: scale(1.05);
+}
+
+.btn-danger {
+  background: #ff4b2b;
+  border: none;
+  transition: background 0.3s ease-in-out;
+}
+
+.btn-danger:hover {
+  background: #ff1c00;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  font-size: 1.1rem;
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #ff4b2b !important;
+}
