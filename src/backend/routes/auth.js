@@ -1,64 +1,42 @@
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const passport = require("passport");
-const User = require("../models/User");
-
+const express = require('express');
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET;
-const REFRESH_SECRET = process.env.REFRESH_SECRET;
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
 
-// Google OAuth Login
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get('/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
 
-// Google OAuth Callback
-router.get(
-    "/google/callback",
-    passport.authenticate("google", { session: false, failureRedirect: "/" }),
-    async (req, res) => {
-        const user = req.user;
+router.get('/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    (req, res) => {
+        const token = jwt.sign(
+            { id: req.user._id, email: req.user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
-        // ✅ Generate Tokens
-        const accessToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "15m" });
-        const refreshToken = jwt.sign({ id: user._id }, REFRESH_SECRET, { expiresIn: "7d" });
+        res.cookie('accessToken', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production"
+        });
 
-        // ✅ Store Tokens in Secure Cookies
-        res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, sameSite: "Strict" });
-        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "Strict" });
-
-        res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+        res.redirect("http://localhost:3000/dashboard"); // Redirect user to frontend
     }
 );
 
-// ✅ Refresh Token Route (Moved Above Export)
-router.post("/refresh", (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) return res.status(403).json({ message: "Refresh token missing" });
-
-    jwt.verify(refreshToken, REFRESH_SECRET, (err, decoded) => {
-        if (err) return res.status(403).json({ message: "Invalid refresh token" });
-
-        const newAccessToken = jwt.sign({ id: decoded.id }, JWT_SECRET, { expiresIn: "15m" });
-        res.json({ accessToken: newAccessToken });
-    });
-});
-
-// Check Auth Status
-router.get("/me", (req, res) => {
+router.get('/me', (req, res) => {
     const token = req.cookies.accessToken;
-    if (!token) return res.status(401).json({ message: "Not authenticated" });
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json({ message: "Invalid token" });
-
-        const user = await User.findById(decoded.id);
         res.json(user);
     });
 });
 
-// Logout
-router.get("/logout", (req, res) => {
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");  // ✅ Clear refresh token on logout
+router.get('/logout', (req, res) => {
+    res.clearCookie('accessToken');
     res.json({ message: "Logged out successfully" });
 });
 
