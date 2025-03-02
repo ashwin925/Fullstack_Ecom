@@ -7,12 +7,11 @@ export default function Home() {
 
     useEffect(() => {
         axios.get("http://localhost:5000/api/auth/me", { withCredentials: true })
-            .then(response => {
-                if (response.data) {
-                    navigate("/dashboard");  // ✅ Redirect logged-in users
-                }
-            })
-            .catch(err => console.error(err));
+    .then(response => {
+        if (response.data) navigate("/dashboard");
+    })
+    .catch(err => console.error("Error:", err));
+
     }, [navigate]);
 
     return (
