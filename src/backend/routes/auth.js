@@ -2,19 +2,18 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
-// Google Login Route
+// ✅ Google Login Route
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Google Callback Route
-router.get(
-    '/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
+// ✅ Google Callback Route
+router.get('/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/' }), 
     (req, res) => {
         res.redirect(`${process.env.CLIENT_URL}/dashboard`);
     }
 );
 
-// Check Authentication Status
+// ✅ Check Authentication Status
 router.get('/me', (req, res) => {
     if (req.isAuthenticated()) {
         res.json(req.user);
@@ -23,11 +22,14 @@ router.get('/me', (req, res) => {
     }
 });
 
-// Logout Route
+// ✅ Logout Route
 router.get('/logout', (req, res) => {
-    req.logout();
-    req.session.destroy(() => {
-        res.redirect('/');
+    req.logout(err => {
+        if (err) return res.status(500).json({ message: "Logout failed" });
+        req.session.destroy(() => {
+            res.clearCookie('connect.sid'); // Ensure session is cleared
+            res.redirect(process.env.CLIENT_URL);
+        });
     });
 });
 
