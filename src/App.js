@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./frontend/index";
 import Dashboard from "./frontend/dashboard";
 import Register from "./frontend/register";
@@ -27,7 +26,8 @@ function App() {
     };
 
     const handleLogout = () => {
-        window.open("http://localhost:5000/api/auth/logout", "_self");
+        axios.get("http://localhost:5000/api/auth/logout", { withCredentials: true })
+            .then(() => setUser(null));
     };
 
     return (
