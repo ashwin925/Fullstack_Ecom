@@ -1,36 +1,44 @@
-const express = require('express');
-const passport = require('passport');
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const passport = require("passport");
+const User = require("../models/User");
+
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// ✅ Google Login Route
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+// Google OAuth Login
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-// ✅ Google Callback Route
-router.get('/google/callback', 
-    passport.authenticate('google', { failureRedirect: '/' }), 
-    (req, res) => {
+// Google OAuth Callback
+router.get(
+    "/google/callback",
+    passport.authenticate("google", { session: false, failureRedirect: "/" }),
+    async (req, res) => {
+        const user = req.user;
+        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
+
+        res.cookie("accessToken", token, { httpOnly: true, secure: true, sameSite: "Strict" });
         res.redirect(`${process.env.CLIENT_URL}/dashboard`);
     }
 );
 
-// ✅ Check Authentication Status
-router.get('/me', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.json(req.user);
-    } else {
-        res.status(401).json({ message: "Not authenticated" });
-    }
+// Check Auth Status
+router.get("/me", (req, res) => {
+    const token = req.cookies.accessToken;
+    if (!token) return res.status(401).json({ message: "Not authenticated" });
+
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+        if (err) return res.status(403).json({ message: "Invalid token" });
+
+        const user = await User.findById(decoded.id);
+        res.json(user);
+    });
 });
 
-// ✅ Logout Route
-router.get('/logout', (req, res) => {
-    req.logout(err => {
-        if (err) return res.status(500).json({ message: "Logout failed" });
-        req.session.destroy(() => {
-            res.clearCookie('connect.sid'); // Ensure session is cleared
-            res.redirect(process.env.CLIENT_URL);
-        });
-    });
+// Logout
+router.get("/logout", (req, res) => {
+    res.clearCookie("accessToken");
+    res.json({ message: "Logged out successfully" });
 });
 
 module.exports = router;
