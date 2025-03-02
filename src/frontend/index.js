@@ -1,4 +1,20 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 export default function Home() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        axios.get("http://localhost:5000/api/auth/me", { withCredentials: true })
+            .then(response => {
+                if (response.data) {
+                    navigate("/dashboard");  // ✅ Redirect logged-in users
+                }
+            })
+            .catch(err => console.error(err));
+    }, [navigate]);
+
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
