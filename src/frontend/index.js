@@ -11,7 +11,7 @@ export default function Home() {
         axios.get("http://localhost:5000/api/auth/me", { withCredentials: true })
             .then(response => {
                 if (response.data) {
-                    navigate("/dashboard");
+                    navigate("/dashboard"); // navigate to dashboard
                 }
             })
             .catch(err => console.error(err));
