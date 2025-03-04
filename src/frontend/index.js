@@ -8,23 +8,11 @@ export default function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = document.cookie
-            .split("; ")
-            .find(row => row.startsWith("accessToken="))
-            ?.split("=")[1];
-
-        axios.get("http://localhost:5000/api/auth/me", {
-            headers: {
-                Authorization: `Bearer ${token}` // Explicitly send token
-            },
-            withCredentials: true // Ensure credentials are sent
-        })
+        axios.get("http://localhost:5000/api/auth/me", { withCredentials: true })
         .then(response => {
-            if (response.data) {
-                navigate("/dashboard"); // Navigate to dashboard if authenticated
-            }
+            if (response.data) navigate("/dashboard");
         })
-        .catch(err => console.error(err));
+        .catch(() => {});
     }, [navigate]);
 
     return (
@@ -32,19 +20,16 @@ export default function Home() {
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
                     <a className="navbar-brand" href="#">E-Commerce</a>
-                    <div className="collapse navbar-collapse">
-                        <ul className="navbar-nav ms-auto">
-                            <li className="nav-item"><a className="nav-link" href="/register">Register</a></li>
-                            <li className="nav-item"><a className="nav-link" href="/login">Login</a></li>
-                        </ul>
-                    </div>
+                    <ul className="navbar-nav ms-auto">
+                        <li className="nav-item"><a className="nav-link" href="/register">Register</a></li>
+                        <li className="nav-item"><a className="nav-link" href="/login">Login</a></li>
+                    </ul>
                 </div>
             </nav>
 
             <div className="container d-flex justify-content-center align-items-center vh-100">
                 <div className="login-card p-4 shadow-lg text-center">
                     <h2 className="mb-3">Welcome to Our E-Commerce Platform</h2>
-                    <p className="mb-4 text-muted">Register or Login to continue.</p>
                     <a href="http://localhost:5000/api/auth/google" className="btn btn-danger w-100">
                         <i className="fab fa-google me-2"></i> Login with Google
                     </a>
