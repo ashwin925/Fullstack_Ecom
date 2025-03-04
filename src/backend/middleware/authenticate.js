@@ -24,4 +24,14 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-module.exports = { authenticate };
+// 🔹 Authorize Middleware
+const authorize = (roles) => {
+    return (req, res, next) => {
+        if (!req.user || !roles.includes(req.user.role)) {
+            return res.status(403).json({ message: "Forbidden: You don't have access." });
+        }
+        next();
+    };
+};
+
+module.exports = { authenticate, authorize }; // ✅ Export both functions
