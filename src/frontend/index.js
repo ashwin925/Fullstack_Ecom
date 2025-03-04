@@ -13,7 +13,7 @@ export default function Home() {
                 if (response.data) {
                     navigate("/dashboard"); // navigate to dashboard
                 }
-            })
+            }) //just a random commit 4 my streak
             .catch(err => console.error(err));
     }, [navigate]);
 
