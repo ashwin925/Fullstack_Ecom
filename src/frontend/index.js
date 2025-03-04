@@ -2,19 +2,29 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./index.css"; // Add this for custom styles
+import "./index.css";
 
 export default function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/auth/me", { withCredentials: true })
-            .then(response => {
-                if (response.data) {
-                    navigate("/dashboard"); // navigate to dashboard
-                }
-            }) //just a random commit 4 my streak
-            .catch(err => console.error(err));
+        const token = document.cookie
+            .split("; ")
+            .find(row => row.startsWith("accessToken="))
+            ?.split("=")[1];
+
+        axios.get("http://localhost:5000/api/auth/me", {
+            headers: {
+                Authorization: `Bearer ${token}` // Explicitly send token
+            },
+            withCredentials: true // Ensure credentials are sent
+        })
+        .then(response => {
+            if (response.data) {
+                navigate("/dashboard"); // Navigate to dashboard if authenticated
+            }
+        })
+        .catch(err => console.error(err));
     }, [navigate]);
 
     return (
