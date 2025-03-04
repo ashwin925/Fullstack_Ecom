@@ -13,29 +13,14 @@ function App() {
     useEffect(() => {
         axios.get("http://localhost:5000/api/auth/me", { withCredentials: true })
             .then(response => {
-                console.log("✅ User Data:", response.data);
                 setUser(response.data);
                 setLoading(false);
             })
-            .catch(error => {
-                console.log("❌ Not Authenticated:", error.response?.data);
+            .catch(() => {
                 setUser(null);
                 setLoading(false);
             });
     }, []);
-
-    const handleGoogleLogin = () => {
-        window.open("http://localhost:5000/api/auth/google", "_self");
-        setTimeout(() => window.location.reload(), 2000); // ✅ Force refresh after login
-    };
-
-    const handleLogout = () => {
-        axios.get("http://localhost:5000/api/auth/logout", { withCredentials: true })
-            .then(() => {
-                setUser(null);
-                window.location.reload(); // ✅ Ensure user is logged out completely
-            });
-    };
 
     return (
         <Router>
@@ -44,15 +29,15 @@ function App() {
                     <h3>Loading...</h3>
                 ) : (
                     <Routes>
-                        <Route path="/" element={<Home onLogin={handleGoogleLogin} />} />
+                        <Route path="/" element={<Home />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/login" element={<Login onLogin={handleGoogleLogin} />} />
-                        <Route path="/dashboard" element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/" />} />
                     </Routes>
                 )}
             </div>
         </Router>
-    ); 
+    );
 }
 
 export default App;
