@@ -4,23 +4,22 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { authenticate, authorize } = require('../middleware/authenticate');
 
-
-// 🔹 Google OAuth Login
+// Google OAuth Login
 router.get('/google',
-    passport.authenticate('google', { scope: ['profile', 'email'], session: false })  // ✅ Disable sessions
+    passport.authenticate('google', { scope: ['profile', 'email'], session: false })
 );
 
 router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/login', session: false }),
     (req, res) => {
         if (!req.user) {
-            return res.redirect('/login'); // Redirect to login on failure
+            return res.redirect('/login');
         }
 
         const token = jwt.sign(
             { id: req.user._id, email: req.user.email, role: req.user.role },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '1d' }
         );
 
         res.cookie('accessToken', token, {
@@ -30,24 +29,22 @@ router.get('/google/callback',
         });
 
         console.log("✅ Google Login Successful! Redirecting...");
-        console.log("🔹 Token Set in Cookies: ", token);
-        res.redirect("http://localhost:3000/dashboard"); 
+        res.redirect("http://localhost:3000/dashboard");
     }
 );
 
-
-// 🔹 Get Logged-in User Info
+// Get Logged-in User Info
 router.get('/me', authenticate, (req, res) => {
     res.json(req.user);
 });
 
-// 🔹 Logout
+// Logout
 router.get('/logout', (req, res) => {
     res.clearCookie('accessToken');
     res.json({ message: "Logged out successfully" });
 });
 
-// 🔹 Role-based Routes
+// Role-based Routes
 router.get('/admin/dashboard', authenticate, authorize(['admin']), (req, res) => {
     res.json({ message: "Welcome Admin! You have full access." });
 });
@@ -60,4 +57,4 @@ router.get('/customer/orders', authenticate, authorize(['customer', 'seller', 'a
     res.json({ message: "Customers can view their orders." });
 });
 
-module.exports = router; // ✅ Only one module.exports
+module.exports = router;
