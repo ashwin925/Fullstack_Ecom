@@ -8,12 +8,21 @@ export default function Dashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/auth/me", {
-            withCredentials: true  // ✅ Ensures cookies (JWT) are sent
+        fetch("http://localhost:5000/api/auth/me", {
+            credentials: "include", // Important! Sends cookies with request
         })
-        .then(response => setUser(response.data))
-        .catch(() => navigate("/")); 
-    }, [navigate]);
+        .then(res => res.json())
+        .then(data => {
+            if (data?.email) {
+                console.log("✅ Logged-in User:", data);
+            } else {
+                console.log("❌ No user found, redirecting to login...");
+                window.location.href = "/login";
+            }
+        })
+        .catch(err => console.log("Error fetching user:", err));
+    }, []);
+    
     
 
     const handleLogout = () => {
