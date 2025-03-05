@@ -16,12 +16,6 @@ async function refreshToken() {
       method: "POST", 
       credentials: "include" 
   });
-
-  if (response.ok) {
-    console.log("Token refreshed successfully");
-} else {
-    console.error("Failed to refresh token");
-}
 }
 
 
