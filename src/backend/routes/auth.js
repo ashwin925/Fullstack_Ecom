@@ -22,10 +22,10 @@ router.get('/google/callback',
             { expiresIn: '1d' }
         );
 
-        res.cookie('accessToken', token, {
+        res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
+            secure: true, //process.env.NODE_ENV === "production"
+            sameSite: "none",
         });
 
         console.log("✅ Google Login Successful! Redirecting...");
