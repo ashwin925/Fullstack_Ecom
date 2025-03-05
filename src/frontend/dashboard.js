@@ -9,6 +9,9 @@ export default function Dashboard() {
 
     useEffect(() => {
         fetch("http://localhost:5000/api/auth/me", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
             credentials: "include", // Important! Sends cookies with request
         })
         .then(res => res.json())
