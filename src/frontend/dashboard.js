@@ -9,7 +9,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         fetch("http://localhost:5000/api/auth/me", {
-            credentials: "include", // Important! Sends cookies with request
+            credentials: "include", 
         })
         .then(res => res.json())
         .then(data => {
@@ -37,4 +37,4 @@ export default function Dashboard() {
             <button onClick={handleLogout} className="btn btn-danger">Logout</button>
         </div>
     );
-} // 4 streaks
+} 

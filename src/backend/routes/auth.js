@@ -4,7 +4,6 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { authenticate, authorize } = require('../middleware/authenticate');
 
-// Google OAuth Login
 router.get('/google',
     passport.authenticate('google', { scope: ['profile', 'email'], session: false })
 );
@@ -24,7 +23,7 @@ router.get('/google/callback',
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false, //process.env.NODE_ENV === "production"
+            secure: false, 
             sameSite: "none",
             maxAge: 24 * 60 * 60 * 1000,
         });
@@ -34,18 +33,15 @@ router.get('/google/callback',
     }
 );
 
-// Get Logged-in User Info
 router.get('/me', authenticate, (req, res) => {
     res.json(req.user);
 });
 
-// Logout
 router.get('/logout', (req, res) => {
     res.clearCookie('accessToken');
     res.json({ message: "Logged out successfully" });
 });
 
-// Role-based Routes
 router.get('/admin/dashboard', authenticate, authorize(['admin']), (req, res) => {
     res.json({ message: "Welcome Admin! You have full access." });
 });

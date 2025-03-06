@@ -3,7 +3,6 @@ const router = express.Router();
 const { authenticate, authorize } = require("../middleware/authenticate");
 const User = require("../models/User");
 
-// 🔐 Get All Users (Admin Only)
 router.get("/users", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -13,7 +12,6 @@ router.get("/users", authenticate, authorize(["admin"]), async (req, res) => {
   }
 });
 
-// 🔐 Make a User an Admin (Admin Only)
 router.put("/make-admin/:id", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -27,7 +25,6 @@ router.put("/make-admin/:id", authenticate, authorize(["admin"]), async (req, re
   }
 });
 
-// 🔐 Make a User a Seller (Admin Only)
 router.put("/make-seller/:id", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);

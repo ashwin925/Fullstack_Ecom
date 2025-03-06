@@ -3,7 +3,6 @@ const User = require('../models/User');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Authenticate Middleware
 const authenticate = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Access denied. Please log in." });
@@ -21,7 +20,6 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-// Authorize Middleware
 const authorize = (roles) => {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {
