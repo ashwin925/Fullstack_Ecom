@@ -10,7 +10,7 @@ require("./config/passport");
 
 const app = express();
 
-// ✅ Middleware
+// ✅ Middleware codes
 app.use(
   cors({
     origin: "http://localhost:3000",
