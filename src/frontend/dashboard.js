@@ -37,4 +37,4 @@ export default function Dashboard() {
             <button onClick={handleLogout} className="btn btn-danger">Logout</button>
         </div>
     );
-}
+} // 4 streaks
