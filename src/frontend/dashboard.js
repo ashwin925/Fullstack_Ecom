@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import api from "./api";
 
 export default function Dashboard() {
-    const [role, setRole] = useState(null);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get("/auth/me")
+        api.get("/auth/me") // 🔥 Fetch logged-in user
             .then(({ data }) => {
-                if (data?.role) {
-                    setRole(data.role);
+                if (data) {
+                    setUser(data);
                 } else {
                     navigate("/login");
                 }
@@ -21,7 +21,14 @@ export default function Dashboard() {
     return (
         <div>
             <h2>Dashboard</h2>
-            {role === "admin" ? <p>Welcome Admin</p> : <p>Welcome User</p>}
+            {user ? (
+                <>
+                    <p>Welcome, {user.name}!</p>
+                    <img src={user.avatar} alt="Profile" />
+                </>
+            ) : (
+                <p>Loading...</p>
+            )}
         </div>
     );
 }
