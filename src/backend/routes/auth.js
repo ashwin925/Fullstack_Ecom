@@ -92,17 +92,11 @@ router.get(
 // ✅ Google Callback Route
 router.get(
     "/google/callback",
-    passport.authenticate("google", {
-        failureRedirect: "/login",
-        session: false, // Disable sessions since you're using JWT
-    }),
+    passport.authenticate("google", { failureRedirect: "/login" }),
     (req, res) => {
-        // Generate a JWT token for the user
-        const token = req.user.token;
-
-        // Redirect to frontend with token (Modify frontend URL as needed)
-        res.redirect(`http://localhost:3000/dashboard?token=${token}`);
+        res.redirect("http://localhost:3000/dashboard"); // 🔥 Redirect to dashboard
     }
 );
+
 
 module.exports = router;
