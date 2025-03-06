@@ -2,8 +2,9 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const passport = require("passport"); // ✅ Import passport
 const User = require("../models/User");
-const { authenticate, authorizeRoles } = require("../middleware/authenticate"); // ✅
+const { authenticate, authorizeRoles } = require("../middleware/authenticate");
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenUtils");
 
 dotenv.config();
@@ -82,4 +83,26 @@ router.post("/logout", (req, res) => {
     res.json({ message: "Logged out successfully" });
 });
 
-module.exports = router; // ✅ Use CommonJS export
+// ✅ Google Login Route
+router.get(
+    "/google",
+    passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// ✅ Google Callback Route
+router.get(
+    "/google/callback",
+    passport.authenticate("google", {
+        failureRedirect: "/login",
+        session: false, // Disable sessions since you're using JWT
+    }),
+    (req, res) => {
+        // Generate a JWT token for the user
+        const token = req.user.token;
+
+        // Redirect to frontend with token (Modify frontend URL as needed)
+        res.redirect(`http://localhost:3000/dashboard?token=${token}`);
+    }
+);
+
+module.exports = router;

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import api from "./api";
-import Home from "./Home";
-import Dashboard from "./Dashboard";
-import Login from "./Login";
+import api from "./frontend/api";
+import Home from "./frontend/index";
+import Dashboard from "./frontend/dashboard";
+import Login from "./frontend/login";
 
 function App() {
     const [user, setUser] = useState(null);
