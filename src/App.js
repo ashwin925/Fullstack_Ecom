@@ -23,9 +23,9 @@ function App() {
         <Router>
             {loading ? <h3>Loading...</h3> : (
                 <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/" />} />
+                    <Route path="/" element={<Login />} /> 
                 </Routes>
             )}
         </Router>
