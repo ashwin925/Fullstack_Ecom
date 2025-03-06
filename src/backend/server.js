@@ -1,9 +1,8 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import cookieParser from "cookie-parser";
-import connectDB from "./config/db.js";
-import authRoutes from "./routes/authRoutes.js";
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
+const connectDB = require("./config/db"); // ✅ Use require instead of import
 
 dotenv.config();
 connectDB();
@@ -14,6 +13,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+const authRoutes = require("./routes/auth"); // ✅ Use require
 app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
