@@ -1,57 +1,85 @@
-const express = require('express');
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import User from "../models/User.js";
+import { authenticate } from "../middleware/authenticate.js";
+import { generateAccessToken, generateRefreshToken } from "../utils/tokenUtils.js";
+
+dotenv.config();
 const router = express.Router();
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const { authenticate, authorize } = require('../middleware/authenticate');
 
-router.get('/google',
-    passport.authenticate('google', { scope: ['profile', 'email'], session: false })
-);
+// ✅ Register User
+router.post("/register", async (req, res) => {
+    const { name, email, password } = req.body;
 
-router.get('/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login', session: false }),
-    (req, res) => {
-        if (!req.user) {
-            return res.redirect('/login');
-        }
+    try {
+        let user = await User.findOne({ email });
+        if (user) return res.status(400).json({ message: "User already exists" });
 
-        const token = jwt.sign(
-            { id: req.user._id, email: req.user.email, role: req.user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user = new User({ name, email, password: hashedPassword });
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: false, 
-            sameSite: "none",
-            maxAge: 24 * 60 * 60 * 1000,
-        });
-
-        console.log("✅ Google Login Successful! Redirecting...");
-        res.redirect("http://localhost:3000/dashboard");
+        await user.save();
+        res.status(201).json({ message: "User registered successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
     }
-);
-
-router.get('/me', authenticate, (req, res) => {
-    res.json(req.user);
 });
 
-router.get('/logout', (req, res) => {
-    res.clearCookie('accessToken');
+// ✅ Login User
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: "Invalid credentials" });
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+
+        res.cookie("accessToken", accessToken, { httpOnly: true, secure: true });
+        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
+
+        res.json({ message: "Login successful", role: user.role });
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// ✅ Get User Data (Protected)
+router.get("/me", authenticate, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// ✅ Refresh Token
+router.post("/refresh", (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) return res.status(401).json({ message: "No refresh token provided" });
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user) => {
+        if (err) return res.status(403).json({ message: "Invalid refresh token" });
+
+        const newAccessToken = generateAccessToken(user);
+        res.cookie("accessToken", newAccessToken, { httpOnly: true, secure: true });
+        res.json({ accessToken: newAccessToken });
+    });
+});
+
+// ✅ Logout
+router.post("/logout", (req, res) => {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     res.json({ message: "Logged out successfully" });
 });
 
-router.get('/admin/dashboard', authenticate, authorize(['admin']), (req, res) => {
-    res.json({ message: "Welcome Admin! You have full access." });
-});
-
-router.get('/seller/products', authenticate, authorize(['seller', 'admin']), (req, res) => {
-    res.json({ message: "Seller/Admin can manage products." });
-});
-
-router.get('/customer/orders', authenticate, authorize(['customer', 'seller', 'admin']), (req, res) => {
-    res.json({ message: "Customers can view their orders." });
-});
-
-module.exports = router;
+export default router;
