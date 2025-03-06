@@ -7,12 +7,12 @@ export default function Dashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get("/auth/me") // 🔥 Fetch logged-in user
+        api.get("/auth/me", { withCredentials: true }) // Ensure credentials are included
             .then(({ data }) => {
                 if (data) {
                     setUser(data);
                 } else {
-                    navigate("/login");
+                    navigate("/login"); // Redirect if not logged in
                 }
             })
             .catch(() => navigate("/login"));
@@ -25,6 +25,9 @@ export default function Dashboard() {
                 <>
                     <p>Welcome, {user.name}!</p>
                     <img src={user.avatar} alt="Profile" />
+                    <button onClick={() => api.get("/auth/logout").then(() => navigate("/login"))}>
+                        Logout
+                    </button>
                 </>
             ) : (
                 <p>Loading...</p>
