@@ -1,9 +1,9 @@
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+const jwt = require("jsonwebtoken");  // ✅ Change import to require
+const dotenv = require("dotenv");
 
 dotenv.config();
 
-export const authenticate = (req, res, next) => {
+const authenticate = (req, res, next) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
@@ -17,9 +17,11 @@ export const authenticate = (req, res, next) => {
     });
 };
 
-export const authorizeRoles = (roles) => (req, res, next) => {
+const authorizeRoles = (roles) => (req, res, next) => {
     if (!roles.includes(req.user.role)) {
         return res.status(403).json({ message: "Access Denied: Insufficient Permissions" });
     }
     next();
 };
+
+module.exports = { authenticate, authorizeRoles };  // ✅ Use CommonJS export
