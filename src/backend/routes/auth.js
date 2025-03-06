@@ -1,10 +1,10 @@
-import express from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import User from "../models/User.js";
-import { authenticate } from "../middleware/authenticate.js";
-import { generateAccessToken, generateRefreshToken } from "../utils/tokenUtils.js";
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+const User = require("../models/User");
+const { authenticate } = require("../middleware/authenticate");
+const { generateAccessToken, generateRefreshToken } = require("../utils/tokenUtils");
 
 dotenv.config();
 const router = express.Router();
@@ -82,4 +82,4 @@ router.post("/logout", (req, res) => {
     res.json({ message: "Logged out successfully" });
 });
 
-export default router;
+module.exports = router; // ✅ Use CommonJS export
