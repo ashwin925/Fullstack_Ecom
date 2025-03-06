@@ -7,13 +7,15 @@ export default function Dashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get("/api/auth/me").then(({ data }) => {
-            if (data?.role) {
-                setRole(data.role);
-            } else {
-                navigate("/login");
-            }
-        }).catch(() => navigate("/login"));
+        api.get("/auth/me")
+            .then(({ data }) => {
+                if (data?.role) {
+                    setRole(data.role);
+                } else {
+                    navigate("/login");
+                }
+            })
+            .catch(() => navigate("/login"));
     }, [navigate]);
 
     return (
