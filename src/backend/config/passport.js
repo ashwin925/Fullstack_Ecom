@@ -2,6 +2,8 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+require("dotenv").config(); // Ensure env variables are loaded
+
 
 passport.use(
   new GoogleStrategy(
@@ -39,4 +41,5 @@ passport.use(
       }
     }
   )
+
 );
