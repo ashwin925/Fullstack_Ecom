@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const User = require("../models/User");
-const { authenticate } = require("../middleware/authenticate");
+const { authenticate, authorizeRoles } = require("../middleware/authenticate"); // ✅
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenUtils");
 
 dotenv.config();
