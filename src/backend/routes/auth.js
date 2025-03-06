@@ -92,11 +92,11 @@ router.get(
 // ✅ Google Callback Route
 router.get(
     "/google/callback",
-    passport.authenticate("google", { failureRedirect: "/login" }),
-    (req, res) => {
-        res.redirect("http://localhost:3000/dashboard"); // 🔥 Redirect to dashboard
-    }
-);
+    passport.authenticate("google", {
+      successRedirect: "http://localhost:3000/dashboard", // Redirect to Dashboard on success
+      failureRedirect: "http://localhost:3000/login", // Redirect to Login on failure
+    })
+  );
 
 
 module.exports = router;
