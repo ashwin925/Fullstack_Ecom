@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "./api";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
@@ -8,11 +8,11 @@ export default function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/auth/me", { withCredentials: true })
-        .then(response => {
-            if (response.data) navigate("/dashboard");
-        })
-        .catch(() => {});
+        api.get("/auth/me")
+            .then(({ data }) => {
+                if (data) navigate("/dashboard");
+            })
+            .catch(() => {});
     }, [navigate]);
 
     return (
