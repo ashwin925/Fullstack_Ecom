@@ -1,35 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import api from "./frontend/api";
-import Home from "./frontend/index";
-import Dashboard from "./frontend/dashboard";
 import Login from "./frontend/login";
+import Dashboard from "./frontend/dashboard";
 
-function App() {
+export default function App() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         api.get("/auth/me").then(({ data }) => {
             setUser(data);
-            setLoading(false);
         }).catch(() => {
             setUser(null);
-            setLoading(false);
-        });
+        }).finally(() => setLoading(false));
     }, []);
+
+    if (loading) return <h3>Loading...</h3>;
 
     return (
         <Router>
-            {loading ? <h3>Loading...</h3> : (
-                <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/" element={<Login />} /> 
-                </Routes>
-            )}
+            <Routes>
+                <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
+                <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+                <Route path="/" element={<Navigate to="/login" />} />
+            </Routes>
         </Router>
     );
 }
-
-export default App;
