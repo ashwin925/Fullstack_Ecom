@@ -31,3 +31,8 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Add to authController.js
+export const getMe = async (req, res) => {
+  res.json(req.user); // User data from authenticate middleware
+};
