@@ -1,27 +1,18 @@
-const jwt = require("jsonwebtoken");  // ✅ Change import to require
-const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-dotenv.config();
+exports.authenticate = async (req, res, next) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-const authenticate = (req, res, next) => {
-    const token = req.cookies.accessToken;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        if (!user) return res.status(401).json({ message: "User not found" });
 
-    if (!token) {
-        return res.status(401).json({ message: "Access Denied: No Token Provided" });
-    }
-
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ message: "Invalid Token" });
         req.user = user;
         next();
-    });
-};
-
-const authorizeRoles = (roles) => (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-        return res.status(403).json({ message: "Access Denied: Insufficient Permissions" });
+    } catch (error) {
+        return res.status(403).json({ message: "Invalid token" });
     }
-    next();
 };
-
-module.exports = { authenticate, authorizeRoles };  // ✅ Use CommonJS export
