@@ -11,9 +11,15 @@ export default function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setUser(null);
+          return;
+        }
         const { data } = await api.get("/auth/me");
         setUser(data);
-      } catch {
+      } catch (err) {
+        localStorage.removeItem("token");
         setUser(null);
       } finally {
         setLoading(false);
@@ -21,7 +27,7 @@ export default function App() {
     };
     fetchUser();
   }, []);
-
+  
   if (loading) return <div>Loading...</div>;
 
   return (
