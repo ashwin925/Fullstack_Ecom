@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import api from "./api";
-import Login from "./login";
-import Dashboard from "./dashboard";
+import api from "./frontend/api";
+import Login from "./frontend/login";
+import Dashboard from "./frontend/dashboard";
 
 export default function App() {
   const [user, setUser] = useState(null);
