@@ -1,40 +1,24 @@
 const express = require("express");
-const session = require("express-session");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
-const connectDB = require("./config/db");
-const passport = require("passport");
-require("./config/passport");
-
-dotenv.config();
-connectDB();
+const mongoose = require("mongoose");
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/userRoutes");
+require("dotenv").config();
 
 const app = express();
-
-app.use(
-  session({
-      secret: process.env.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-          secure: process.env.NODE_ENV === "production",
-          httpOnly: true,
-          sameSite: "lax"
-      },
-  })
-);
-
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(passport.initialize());
-app.use(passport.session());
 
-const authRoutes = require("./routes/auth"); // ✅ Use require instead of import
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("MongoDB Connected"))
+.catch((err) => console.error("DB Connection Error:", err));
+
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
+app.listen(5000, () => console.log("Server running on port 5000"));
