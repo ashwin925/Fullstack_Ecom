@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
+import { authenticate, authorize } from "../middleware/authenticate.js";
+import User from "../models/User.js";
 const router = express.Router();
-const { authenticate, authorize } = require("../middleware/authenticate");
-const User = require("../models/User");
 
 router.get("/users", authenticate, authorize(["admin"]), async (req, res) => {
   try {
@@ -38,4 +38,4 @@ router.put("/make-seller/:id", authenticate, authorize(["admin"]), async (req, r
   }
 });
 
-module.exports = router;
+export default router;
