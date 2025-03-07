@@ -11,19 +11,21 @@ export default function Login() {
         e.preventDefault();
         try {
             const { data } = await api.post("/auth/login", { email, password });
-            alert("Login successful");
-            navigate("/dashboard");
+            localStorage.setItem("token", data.token);
+            navigate(data.role === "admin" ? "/admin" : "/dashboard");
         } catch (error) {
             alert(error.response?.data?.message || "Login failed");
         }
     };
 
     return (
-        <div>
+        <div className="container mt-5">
             <h2>Login</h2>
             <form onSubmit={handleLogin}>
-                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <input type="email" placeholder="Email" required 
+                    onChange={(e) => setEmail(e.target.value)} />
+                <input type="password" placeholder="Password" required 
+                    onChange={(e) => setPassword(e.target.value)} />
                 <button type="submit">Login</button>
             </form>
         </div>
