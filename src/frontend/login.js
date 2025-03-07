@@ -10,13 +10,20 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await api.post("/auth/login", { email, password });
-            localStorage.setItem("token", data.token);
-            navigate(data.role === "admin" ? "/admin" : "/dashboard");
+          const { data } = await api.post("/auth/login", { email, password });
+          localStorage.setItem("token", data.token);
+          // Redirect based on role
+          navigate(data.role === "admin" ? "/admin" : "/dashboard");
         } catch (error) {
-            alert(error.response?.data?.message || "Login failed");
+          // Display detailed error
+          alert(
+            error.response?.data?.message || 
+            error.message || 
+            "Login failed. Check the console."
+          );
+          console.error("Login error details:", error.response?.data || error);
         }
-    };
+      };
 
     return (
         <div className="container mt-5">

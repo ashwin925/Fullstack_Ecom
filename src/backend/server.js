@@ -10,7 +10,10 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000", // Frontend URL
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
