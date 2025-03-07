@@ -21,17 +21,24 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: "User not found" });
+    if (!user) {
+      console.log("User not found:", email);
+      return res.status(401).json({ message: "User not found" });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: "Invalid password" });
+    if (!isMatch) {
+      console.log("Password mismatch for user:", email);
+      return res.status(401).json({ message: "Invalid password" });
+    }
 
-    res.json({ token: generateToken(user), role: user.role });
+    const token = generateToken(user);
+    res.json({ token, role: user.role });
   } catch (error) {
+    console.error("Login error:", error); // Log the actual error
     res.status(500).json({ message: "Server error" });
   }
 };
-
 // Add to authController.js
 export const getMe = async (req, res) => {
   res.json(req.user); // User data from authenticate middleware
