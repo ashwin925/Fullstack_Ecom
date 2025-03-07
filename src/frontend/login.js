@@ -12,9 +12,12 @@ export default function Login() {
     try {
       const { data } = await api.post("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
-      navigate(data.role === "admin" ? "/admin" : "/dashboard");
+      // Fetch user role after login
+      const { data: userData } = await api.get("/auth/me");
+      navigate(userData.role === "admin" ? "/admin" : "/dashboard");
     } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
+      alert("Login failed. Check console.");
+      console.error(error);
     }
   };
 
