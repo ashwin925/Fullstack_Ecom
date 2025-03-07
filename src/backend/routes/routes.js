@@ -1,15 +1,14 @@
 const express = require("express");
-const { verifyRole } = require("../controllers/authController");
 const router = express.Router();
 const { authenticate, authorize } = require("../middleware/authenticate");
 
 
-router.get("/admin", verifyRole(["admin"]), (req, res) => {
+router.get("/admin", authenticate, authorize(["admin"]), (req, res) => {
     res.json({ message: "Welcome Admin" });
-});
-
-router.get("/user", verifyRole(["user", "admin"]), (req, res) => {
+  });
+  
+  router.get("/user", authenticate, authorize(["user", "admin"]), (req, res) => {
     res.json({ message: "Welcome User" });
-});
-
-module.exports = router;
+  });
+  
+  module.exports = router;
