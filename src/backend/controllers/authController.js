@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
-// ✅ Generate JWT with role-based authentication
 const generateToken = (user) => {
     return jwt.sign(
         { id: user._id, role: user.role },
@@ -27,7 +26,6 @@ exports.login = async (req, res) => {
     }
 };
 
-// ✅ Middleware to verify JWT and roles
 exports.verifyRole = (roles) => {
     return (req, res, next) => {
         const token = req.cookies.token;

@@ -7,12 +7,12 @@ export default function Dashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get("/auth/me", { withCredentials: true }) // Ensure credentials are included
+        api.get("/auth/me", { withCredentials: true }) 
             .then(({ data }) => {
                 if (data) {
                     setUser(data);
                 } else {
-                    navigate("/login"); // Redirect if not logged in
+                    navigate("/login"); 
                 }
             })
             .catch(() => navigate("/login"));
