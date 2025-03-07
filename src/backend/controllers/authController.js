@@ -17,16 +17,32 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: "Invalid credentials" });
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+  
+      // Check password (for non-OAuth users)
+      if (user.password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          return res.status(401).json({ message: "Invalid password" });
         }
-        res.json({ token: generateToken(user), role: user.role });
+      } else {
+        return res.status(401).json({ message: "Account uses Google login" });
+      }
+  
+      // Generate token
+      const token = generateToken(user);
+      res.json({ token, role: user.role });
+  
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+      console.error("Login error:", error); // Add logging
+      res.status(500).json({ message: "Server error" });
     }
-};
+  };
 
 export const getMe = async (req, res) => {
     res.json(req.user);
