@@ -10,14 +10,18 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      // Step 1: Login to get token
       const { data } = await api.post("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
-      // Fetch user role after login
+
+      // Step 2: Fetch user data using the token (auto-added via interceptor)
       const { data: userData } = await api.get("/auth/me");
+      
+      // Step 3: Redirect based on role
       navigate(userData.role === "admin" ? "/admin" : "/dashboard");
     } catch (error) {
-      alert("Login failed. Check console.");
-      console.error(error);
+      alert(error.response?.data?.message || "Login failed");
+      console.error("Login error:", error);
     }
   };
 
@@ -31,6 +35,7 @@ export default function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          autoFocus
         />
         <input
           type="password"
@@ -39,7 +44,9 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit" className="btn btn-primary w-100 mt-3">
+          Login
+        </button>
       </form>
     </div>
   );
