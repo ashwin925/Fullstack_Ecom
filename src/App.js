@@ -6,7 +6,7 @@ import Navbar from './frontend/components/Navbar';
 import Home from './pages/Home';
 import Login from './frontend/pages/login';
 import Register from './frontend/pages/register';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './frontend/pages/Dashboard';
 import Admin from './pages/Admin';
 
 const App = () => {
