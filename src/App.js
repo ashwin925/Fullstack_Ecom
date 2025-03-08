@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from './frontend/api/axios';
 import PrivateRoute from './frontend/components/PrivateRoute';
 import Navbar from './frontend/components/Navbar';
-import Home from './pages/Home';
+import Home from './frontend/pages/login';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
