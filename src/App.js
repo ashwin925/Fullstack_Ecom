@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import Login from './frontend/pages/login';
 import Register from './frontend/pages/register';
 import Dashboard from './frontend/pages/Dashboard';
-import Admin from './pages/Admin';
+import Admin from './frontend/pages/Home';
 
 const App = () => {
   const [user, setUser] = useState(null);
