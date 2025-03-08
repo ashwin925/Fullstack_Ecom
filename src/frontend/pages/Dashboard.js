@@ -1,37 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "./api";
+import React, { useEffect, useState } from 'react';
+import axios from '../api/axios';
+import ProductList from '../components/ProductList';
 
-export default function Dashboard() {
-    const [user, setUser] = useState(null);
-    const navigate = useNavigate();
+const Dashboard = () => {
+  const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
 
-    useEffect(() => {
-        api.get("/auth/me", { withCredentials: true }) 
-            .then(({ data }) => {
-                if (data) {
-                    setUser(data);
-                } else {
-                    navigate("/login"); 
-                }
-            })
-            .catch(() => navigate("/login"));
-    }, [navigate]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userResponse = await axios.get('/auth/me');
+        const productsResponse = await axios.get('/products');
+        setUser(userResponse.data);
+        setProducts(productsResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
-    return (
-        <div>
-            <h2>Dashboard</h2>
-            {user ? (
-                <>
-                    <p>Welcome, {user.name}!</p>
-                    <img src={user.avatar} alt="Profile" />
-                    <button onClick={() => api.get("/auth/logout").then(() => navigate("/login"))}>
-                        Logout
-                    </button>
-                </>
-            ) : (
-                <p>Loading...</p>
-            )}
-        </div>
-    );
-}
+  return (
+    <div className="dashboard-container">
+      <h1>Welcome {user?.name}</h1>
+      <div className="dashboard-content">
+        <ProductList products={products} />
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
