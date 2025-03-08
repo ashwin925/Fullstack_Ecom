@@ -5,7 +5,7 @@ import PrivateRoute from './frontend/components/PrivateRoute';
 import Navbar from './frontend/components/Navbar';
 import Home from './pages/Home';
 import Login from './frontend/pages/login';
-import Register from './pages/Register';
+import Register from './frontend/pages/register';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 
