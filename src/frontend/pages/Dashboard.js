@@ -1,31 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axios';
-import ProductList from '../components/ProductList';
+import ProductList from '../components/ProductList'; // Ensure correct casing
 
-const Dashboard = () => {
-  const [user, setUser] = useState(null);
+const Dashboard = ({ user }) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProducts = async () => {
       try {
-        const userResponse = await axios.get('/auth/me');
-        const productsResponse = await axios.get('/products');
-        setUser(userResponse.data);
-        setProducts(productsResponse.data);
+        const response = await axios.get('/products');
+        setProducts(response.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching products:', error);
       }
     };
-    fetchData();
+    fetchProducts();
   }, []);
 
   return (
-    <div className="dashboard-container">
-      <h1>Welcome {user?.name}</h1>
-      <div className="dashboard-content">
-        <ProductList products={products} />
-      </div>
+    <div className="container py-4">
+      <h1 className="mb-4">Welcome {user?.name}</h1>
+      <ProductList products={products} />
     </div>
   );
 };

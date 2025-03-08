@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from '../api/axios';
 import UserManagement from '../components/UserManagement';
 
-const Admin = () => {
+const Admin = ({ user }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -18,12 +18,15 @@ const Admin = () => {
   }, []);
 
   return (
-    <div className="admin-dashboard">
-      <h1>Admin Dashboard</h1>
-      <div className="dashboard-content">
-        <UserManagement users={users} />
-        {/* Add other admin components */}
+    <div className="container py-4">
+      <h1 className="mb-4">Admin Dashboard</h1>
+      <div className="card">
+        <div className="card-body">
+          <h2 className="card-title">Welcome, {user?.name}</h2>
+          <p className="card-text">You have administrator privileges</p>
+        </div>
       </div>
+      <UserManagement users={users} />
     </div>
   );
 };

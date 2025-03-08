@@ -4,10 +4,10 @@ import axios from './frontend/api/axios';
 import PrivateRoute from './frontend/components/PrivateRoute';
 import Navbar from './frontend/components/Navbar';
 import Home from './frontend/pages/Home';
-import Login from './frontend/pages/login';
+import Login from './frontend/pages/Login';
 import Register from './frontend/pages/register';
 import Dashboard from './frontend/pages/dashboard';
-import Admin from './frontend/pages/Admin'; // Ensure this file exists
+import Admin from './frontend/pages/Admin';
 
 const App = () => {
   const [user, setUser] = useState(null);
