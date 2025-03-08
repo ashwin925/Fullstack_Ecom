@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from './frontend/api/axios';
-import PrivateRoute from './components/PrivateRoute';
+import PrivateRoute from './frontend/components/PrivateRoute';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
