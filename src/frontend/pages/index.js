@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "./api";
+import api from "../api";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 

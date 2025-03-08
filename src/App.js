@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import api from "./frontend/api";
-import Login from "./frontend/login";
+import Login from "./frontend/pages/login";
 import Dashboard from "./frontend/dashboard";
 
 export default function App() {
