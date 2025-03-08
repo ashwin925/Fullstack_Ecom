@@ -1,53 +1,41 @@
-import React, { useState } from "react";
-import api from "../api";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import axios from '../api/axios';
+import { useNavigate } from 'react-router-dom';
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     try {
-      // Step 1: Login to get token
-      const { data } = await api.post("/auth/login", { email, password });
-      localStorage.setItem("token", data.token);
-
-      // Step 2: Fetch user data using the token (auto-added via interceptor)
-      const { data: userData } = await api.get("/auth/me");
-      
-      // Step 3: Redirect based on role
-      navigate(userData.role === "admin" ? "/admin" : "/dashboard");
+      const { data } = await axios.post('/auth/login', formData);
+      localStorage.setItem('token', data.token);
+      navigate(data.role === 'admin' ? '/admin' : '/dashboard');
     } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
-      console.error("Login error:", error);
+      alert(error.response?.data?.message || 'Login failed');
     }
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+    <div className="auth-container">
+      <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          autoFocus
+          value={formData.email}
+          onChange={e => setFormData({ ...formData, email: e.target.value })}
         />
         <input
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          value={formData.password}
+          onChange={e => setFormData({ ...formData, password: e.target.value })}
         />
-        <button type="submit" className="btn btn-primary w-100 mt-3">
-          Login
-        </button>
+        <button type="submit">Sign In</button>
       </form>
     </div>
   );
-}
+};
+
+export default Login;

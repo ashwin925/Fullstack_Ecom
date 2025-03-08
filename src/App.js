@@ -1,65 +1,60 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import api from "./frontend/api";
-import Login from "./frontend/pages/login";
-import Dashboard from "./frontend/dashboard";
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import axios from './api/axios';
+import PrivateRoute from './components/PrivateRoute';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Admin from './pages/Admin';
 
-export default function App() {
+const App = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const checkAuth = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setUser(null);
-          return;
-        }
-        const { data } = await api.get("/auth/me");
+        const { data } = await axios.get('/auth/me');
         setUser(data);
-      } catch (err) {
-        localStorage.removeItem("token");
+      } catch (error) {
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
-    fetchUser();
+    checkAuth();
   }, []);
-  
-  if (loading) return <div>Loading...</div>;
+
+  if (loading) return <div className="loading">Loading...</div>;
 
   return (
-    <Router>
+    <BrowserRouter>
+      <Navbar user={user} />
       <Routes>
-        <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute user={user} roles={["user", "admin", "seller"]}>
+            <PrivateRoute roles={['user', 'admin']}>
               <Dashboard />
-            </ProtectedRoute>
+            </PrivateRoute>
           }
         />
         <Route
           path="/admin"
           element={
-            <ProtectedRoute user={user} roles={["admin"]}>
-              <AdminPanel />
-            </ProtectedRoute>
+            <PrivateRoute roles={['admin']}>
+              <Admin />
+            </PrivateRoute>
           }
         />
-        <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
-}
-
-const ProtectedRoute = ({ user, roles, children }) => {
-  if (!user) return <Navigate to="/login" />;
-  if (!roles.includes(user.role)) return <Navigate to="/dashboard" />;
-  return children;
 };
 
-const AdminPanel = () => <h2>Admin Dashboard</h2>;
+export default App;
